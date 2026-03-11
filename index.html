@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J&L Tax Inc. – Book an Appointment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2a6c;
+    --blue: #2341a8;
+    --orange: #e07b00;
+    --gold: #f5a623;
+    --white: #ffffff;
+    --light: #f4f6fb;
+    --gray: #6b7280;
+    --border: #d1d9f0;
+    --shadow: 0 8px 40px rgba(26,42,108,0.13);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: #1e2a45;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── STICKY HEADER ── */
+  .top-bar {
+    background: rgba(26,42,108,0.97);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    box-shadow: 0 2px 16px rgba(26,42,108,0.22);
+  }
+  .top-bar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 900;
+    color: #fff; letter-spacing: -0.3px;
+  }
+  .top-bar-brand span { color: var(--gold); }
+  .question-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #ffffff;
+    color: var(--blue); border: 2.5px solid var(--blue);
+    padding: 8px 18px; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.3px;
+    box-shadow: 0 3px 14px rgba(255,255,255,0.25);
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s, color 0.2s;
+    white-space: nowrap;
+    animation: pulse-btn 2.5s ease-in-out infinite;
+  }
+  .question-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(35,65,168,0.4);
+  }
+  @keyframes pulse-btn {
+    0%,100% { box-shadow: 0 3px 14px rgba(255,255,255,0.2); }
+    50%      { box-shadow: 0 3px 22px rgba(255,255,255,0.5); }
+  }
+  .q-pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--orange);
+    animation: dot-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.5); opacity: 0.5; }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, var(--orange) 100%);
+    padding: 52px 24px 72px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(224,123,0,0.18);
+  }
+  .hero::after {
+    content: ''; position: absolute;
+    bottom: -80px; left: -40px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .logo-ring {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 76px; height: 76px; border-radius: 50%;
+    background: var(--orange); margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(224,123,0,0.45);
+    position: relative; z-index: 1;
+  }
+  .logo-ring span {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -1px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 6vw, 3.2rem); font-weight: 900;
+    color: #fff; letter-spacing: -0.5px;
+    position: relative; z-index: 1;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p.subtitle {
+    color: rgba(255,255,255,0.82); font-size: 1rem;
+    margin-top: 10px; font-weight: 300; letter-spacing: 0.5px;
+    position: relative; z-index: 1;
+  }
+  .hero-services {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-top: 26px;
+    position: relative; z-index: 1;
+  }
+  .hero-services span {
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; padding: 5px 14px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.3px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    max-width: 680px;
+    margin: -36px auto 0;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 40px 36px 52px;
+    position: relative; z-index: 2;
+  }
+
+  .step-label {
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 5px;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--navy); margin-bottom: 20px;
+  }
+  .section-divider { height: 1px; background: var(--border); margin: 30px 0; }
+
+  /* inputs */
+  .form-group { margin-bottom: 20px; }
+  label {
+    display: block; font-size: 0.87rem; font-weight: 600;
+    color: var(--navy); margin-bottom: 7px;
+  }
+  input[type="text"], input[type="tel"], select, textarea {
+    width: 100%; padding: 12px 16px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.97rem;
+    color: #1e2a45; background: #fafbff;
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none; -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(35,65,168,0.10);
+    background: #fff;
+  }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a2a6c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    padding-right: 42px;
+  }
+
+  /* ── CALENDAR ── */
+  .calendar-wrap {
+    border: 1.5px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: #fafbff;
+  }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--navy); padding: 12px 18px; color: #fff;
+  }
+  .cal-header button {
+    background: none; border: none; color: #fff;
+    font-size: 1.3rem; cursor: pointer; padding: 0 6px;
+    line-height: 1; transition: color 0.2s;
+  }
+  .cal-header button:hover { color: var(--gold); }
+  .cal-header span {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700;
+  }
+  .cal-days-header {
+    display: grid; grid-template-columns: repeat(7,1fr);
+    background: var(--blue); padding: 6px 0;
+  }
+  .cal-days-header div {
+    text-align: center; color: rgba(255,255,255,0.8);
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7,1fr);
+    gap: 2px; padding: 10px;
+  }
+  .cal-day {
+    aspect-ratio: 1; display: flex;
+    align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.9rem;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+    border: none; background: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; color: #1e2a45;
+  }
+  .cal-day:hover:not(.disabled):not(.empty) { background: var(--blue); color: #fff; }
+  .cal-day.selected {
+    background: var(--orange); color: #fff; font-weight: 700;
+    box-shadow: 0 2px 12px rgba(224,123,0,0.35);
+  }
+  .cal-day.today { color: var(--orange); font-weight: 700; }
+  .cal-day.disabled { color: #c5cce0; cursor: not-allowed; background: none; }
+  .cal-day.empty { cursor: default; }
+
+  /* ── SMOOTH REVEAL ── */
+  .reveal-section {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+    opacity: 0;
+    scroll-margin-top: 80px;
+  }
+  .reveal-section.visible { max-height: 1000px; opacity: 1; }
+
+  /* ── TIME GRID ── */
+  .time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 10px;
+  }
+  .time-btn {
+    padding: 10px 6px; border: 1.5px solid var(--border);
+    border-radius: 9px; background: #fafbff;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    font-weight: 500; color: var(--navy); cursor: pointer;
+    transition: all 0.18s; text-align: center;
+  }
+  .time-btn:hover { border-color: var(--blue); background: #eef1fb; }
+  .time-btn.selected {
+    background: var(--navy); color: #fff; border-color: var(--navy);
+    box-shadow: 0 2px 10px rgba(26,42,108,0.22);
+  }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    background: linear-gradient(135deg, #f0f3ff, #fff8ee);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--orange);
+    border-radius: 12px; padding: 16px 20px;
+    font-size: 0.93rem; line-height: 2.1;
+    margin-bottom: 24px; display: none;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+  .btn {
+    flex: 1; min-width: 165px; padding: 15px 20px;
+    border-radius: 12px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    letter-spacing: 0.3px; transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-sms {
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    color: #fff; box-shadow: 0 4px 20px rgba(224,123,0,0.35);
+  }
+  .btn-sms:hover { box-shadow: 0 6px 26px rgba(224,123,0,0.5); transform: translateY(-1px); }
+  .btn-email {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff; box-shadow: 0 4px 20px rgba(26,42,108,0.25);
+  }
+  .btn-email:hover { box-shadow: 0 6px 26px rgba(26,42,108,0.4); transform: translateY(-1px); }
+
+  /* ── SIDE PANEL ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,15,40,0.38); z-index: 98;
+    backdrop-filter: blur(3px);
+  }
+  .overlay.show { display: block; }
+  .side-panel {
+    position: fixed; right: -420px; top: 0;
+    width: 380px; height: 100vh;
+    background: #fff;
+    box-shadow: -8px 0 40px rgba(26,42,108,0.18);
+    z-index: 99;
+    transition: right 0.45s cubic-bezier(0.4,0,0.2,1);
+    padding: 52px 28px 32px;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .side-panel.open { right: 0; }
+  .panel-close {
+    position: absolute; top: 16px; right: 18px;
+    background: none; border: none;
+    font-size: 1.5rem; cursor: pointer;
+    color: var(--gray); transition: color 0.2s;
+  }
+  .panel-close:hover { color: var(--navy); }
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--navy); margin-bottom: 6px;
+  }
+  .panel-title span { color: var(--orange); }
+  .panel-sub { color: var(--gray); font-size: 0.9rem; margin-bottom: 26px; }
+  .panel-form .form-group { margin-bottom: 18px; }
+  .panel-form textarea { resize: vertical; min-height: 140px; max-height: 240px; }
+  .char-count { text-align: right; font-size: 0.78rem; color: var(--gray); margin-top: 4px; }
+  .btn-panel-sms {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    color: #fff; border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 18px rgba(224,123,0,0.3);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 6px;
+  }
+  .btn-panel-sms:hover { box-shadow: 0 6px 24px rgba(224,123,0,0.48); transform: translateY(-1px); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy); color: #fff;
+    padding: 14px 28px; border-radius: 40px;
+    font-weight: 600; font-size: 0.95rem;
+    box-shadow: 0 6px 30px rgba(26,42,108,0.3);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    z-index: 200; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  footer {
+    text-align: center; padding: 36px 16px 28px;
+    color: var(--gray); font-size: 0.85rem; line-height: 1.9;
+  }
+  footer strong { color: var(--navy); }
+
+  @media(max-width:560px) {
+    .card { padding: 26px 18px 36px; margin: -20px 12px 0; }
+    .side-panel { width: 94vw; right: -98vw; }
+    .top-bar { padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── STICKY HEADER ── -->
+<div class="top-bar">
+  <div class="top-bar-brand">J<span>&</span>L Tax Inc.</div>
+  <button class="question-btn" id="question-trigger-btn">
+    <div class="q-pulse"></div>
+    Questions? Click Here &nbsp;💬
+  </button>
+</div>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="logo-ring"><span>J&L</span></div>
+  <h1>J<span>&</span>L Tax <span>Inc.</span></h1>
+  <p class="subtitle">Accounting · Audit &amp; Tax Services &nbsp;|&nbsp; Professional Accountants</p>
+  <div class="hero-services">
+    <span>Tax Preparation</span>
+    <span>Payroll / 1099</span>
+    <span>Bookkeeping</span>
+    <span>ITIN Processing</span>
+    <span>Sales Tax</span>
+    <span>Tax Resolution</span>
+    <span>IRS Representation</span>
+    <span>Entity Formation</span>
+  </div>
+</div>
+
+<!-- ── MAIN CARD ── -->
+<div class="card">
+
+  <!-- STEP 1: DATE -->
+  <div class="step-label">Step 1 of 4</div>
+  <div class="step-title">Pick a Date</div>
+  <div class="form-group">
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <button onclick="changeMonth(-1)">&#8249;</button>
+        <span id="cal-month-label"></span>
+        <button onclick="changeMonth(1)">&#8250;</button>
+      </div>
+      <div class="cal-days-header">
+        <div>Su</div><div>Mo</div><div>Tu</div>
+        <div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: TIME (reveals after date) -->
+  <div class="reveal-section" id="time-section">
+    <div class="section-divider"></div>
+    <div class="step-label">Step 2 of 4</div>
+    <div class="step-title">Choose a Time</div>
+    <div class="time-grid" id="time-grid"></div>
+  </div>
+
+  <!-- STEP 3: SERVICE (reveals after time) -->
+  <div class="reveal-section" id="service-section">
+    <div class="section-divider"></div>
+    <div class="step-label">Step 3 of 4</div>
+    <div class="step-title">Service Requested</div>
+    <div class="form-group">
+      <label for="service">Select a Service</label>
+      <select id="service" onchange="onServiceChange()">
+        <option value="" disabled selected>-- Choose a service --</option>
+        <option>Tax Preparation &amp; Planning</option>
+        <option>Payroll / 1099 Processing</option>
+        <option>Bookkeeping</option>
+        <option>ITIN Processing</option>
+        <option>Sales Tax</option>
+        <option>Tax Resolution</option>
+        <option>IRS Representation / Audit Defense</option>
+        <option>Entity Formation (INC / S-Corp / LLC / LP)</option>
+        <option>Other / General Inquiry</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- STEP 4: YOUR INFO + SUBMIT (reveals after service) -->
+  <div class="reveal-section" id="info-section">
+    <div class="section-divider"></div>
+    <div class="step-label">Step 4 of 4</div>
+    <div class="step-title">Your Information</div>
+    <p style="color:var(--gray);font-size:0.9rem;margin-bottom:22px;">
+      Almost done! Just your name and number so we can confirm your appointment.
+    </p>
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="John Smith" oninput="updateSummary()">
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" placeholder="(718) 000-0000" oninput="updateSummary()">
+    </div>
+
+    <div class="section-divider"></div>
+    <div class="step-label">Review &amp; Send</div>
+    <div class="step-title" style="margin-bottom:14px;">Your Appointment Summary</div>
+    <div class="summary-box" id="summary-box"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-sms" onclick="submitSMS()">📱 Send via SMS</button>
+      <button class="btn btn-email" onclick="submitEmail()">✉️ Send via Email</button>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<footer>
+  <strong>J&L Tax Inc.</strong> &nbsp;·&nbsp; 142 Rockaway Ave, Valley Stream, NY 11580<br>
+  ☎ 718.277.0200 &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="77121d180412071f371d1619131b03160f5914181a">[email&#160;protected]</a> &nbsp;·&nbsp; jandltax.com
+</footer>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ── SIDE PANEL ── -->
+<div class="side-panel" id="side-panel">
+  <button class="panel-close" id="panel-close-btn">✕</button>
+  <div class="panel-title">Got a <span>Question?</span></div>
+  <p class="panel-sub">Send us a message — we'll get back to you quickly!</p>
+  <div class="panel-form">
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="q-name" placeholder="Full name">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="q-phone" placeholder="(718) 000-0000">
+    </div>
+    <div class="form-group">
+      <label>Your Message</label>
+      <textarea id="q-message" maxlength="500" placeholder="Type your question here…" oninput="updateCount()"></textarea>
+      <div class="char-count"><span id="char-num">0</span> / 500</div>
+    </div>
+    <button class="btn-panel-sms" onclick="sendQuestion()">📱 Send Question via SMS</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ── STATE ── */
+  let selectedDate = null;
+  let selectedTime = null;
+  let currentMonth = new Date().getMonth();
+  let currentYear  = new Date().getFullYear();
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+
+  /* ── CALENDAR ── */
+  function renderCalendar() {
+    document.getElementById('cal-month-label').textContent = MONTHS[currentMonth] + ' ' + currentYear;
+    const grid  = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    const first = new Date(currentYear, currentMonth, 1).getDay();
+    const days  = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today = new Date();
+
+    for (let i = 0; i < first; i++) {
+      const e = document.createElement('button');
+      e.className = 'cal-day empty'; e.disabled = true;
+      grid.appendChild(e);
+    }
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(currentYear, currentMonth, d);
+      const dow  = date.getDay();
+      const isWeekend = (dow === 0 || dow === 6);
+      const isPast    = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const el = document.createElement('button');
+      el.className = 'cal-day';
+      el.textContent = d;
+      if (isWeekend || isPast) {
+        el.classList.add('disabled'); el.disabled = true;
+      } else {
+        if (date.toDateString() === today.toDateString()) el.classList.add('today');
+        if (selectedDate && selectedDate.toDateString() === date.toDateString()) el.classList.add('selected');
+        el.onclick = (function(d2, el2){ return function(){ selectDate(d2, el2); }; })(date, el);
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+    renderCalendar();
+  }
+
+  function selectDate(date, el) {
+    selectedDate = date;
+    selectedTime = null;
+    document.querySelectorAll('.cal-day').forEach(function(b){ b.classList.remove('selected'); });
+    el.classList.add('selected');
+    // reset downstream steps
+    document.getElementById('service-section').classList.remove('visible');
+    document.getElementById('info-section').classList.remove('visible');
+    document.getElementById('service').value = '';
+    buildTimeGrid();
+    smoothReveal('time-section');
+  }
+
+  /* ── TIME ── */
+  function buildTimeGrid() {
+    const grid = document.getElementById('time-grid');
+    grid.innerHTML = '';
+    for (let h = 8; h < 17; h++) {
+      ['00','30'].forEach(function(min) {
+        if (h === 16 && min === '30') return;
+        const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+        const ampm   = h < 12 ? 'AM' : 'PM';
+        const lbl    = hour12 + ':' + min + ' ' + ampm;
+        const btn    = document.createElement('button');
+        btn.className   = 'time-btn';
+        btn.textContent = lbl;
+        btn.onclick     = (function(l, b){ return function(){ selectTime(l, b); }; })(lbl, btn);
+        grid.appendChild(btn);
+      });
+    }
+  }
+
+  function selectTime(time, el) {
+    selectedTime = time;
+    document.querySelectorAll('.time-btn').forEach(function(b){ b.classList.remove('selected'); });
+    el.classList.add('selected');
+    // reset downstream
+    document.getElementById('info-section').classList.remove('visible');
+    document.getElementById('service').value = '';
+    smoothReveal('service-section');
+  }
+
+  /* ── SERVICE ── */
+  function onServiceChange() {
+    smoothReveal('info-section');
+    updateSummary();
+  }
+
+  /* ── SMOOTH REVEAL + SCROLL ── */
+  function smoothReveal(id) {
+    var el = document.getElementById(id);
+    el.classList.add('visible');
+    setTimeout(function() {
+      var headerHeight = 56;
+      var bar = document.querySelector('.top-bar');
+      if (bar) headerHeight = bar.offsetHeight;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }, 350);
+  }
+
+  /* ── SUMMARY ── */
+  function updateSummary() {
+    const box     = document.getElementById('summary-box');
+    const service = document.getElementById('service').value;
+    const name    = document.getElementById('name').value;
+    const phone   = document.getElementById('phone').value;
+    if (!selectedDate) return;
+    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    let html = '<b>📅 Date:</b> ' + dateStr + '<br>';
+    if (selectedTime) html += '<b>⏰ Time:</b> ' + selectedTime + '<br>';
+    if (service)      html += '<b>🗂 Service:</b> ' + service + '<br>';
+    if (name)         html += '<b>👤 Name:</b> ' + name + '<br>';
+    if (phone)        html += '<b>📞 Phone:</b> ' + phone;
+    box.innerHTML = html;
+    box.style.display = 'block';
+  }
+
+  /* ── VALIDATE ── */
+  function validate() {
+    if (!selectedDate)  { showToast('⚠️ Please pick a date'); return false; }
+    if (!selectedTime)  { showToast('⚠️ Please choose a time'); return false; }
+    if (!document.getElementById('service').value) { showToast('⚠️ Please select a service'); return false; }
+    if (!document.getElementById('name').value.trim()) { showToast('⚠️ Please enter your name'); return false; }
+    if (!document.getElementById('phone').value.trim()) { showToast('⚠️ Please enter your phone number'); return false; }
+    return true;
+  }
+
+  function buildMsgText() {
+    const name    = document.getElementById('name').value;
+    const phone   = document.getElementById('phone').value;
+    const service = document.getElementById('service').value;
+    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    return 'New Appt - J&L Tax\nName: ' + name + '\nPhone: ' + phone +
+           '\nDate: ' + dateStr + '\nTime: ' + selectedTime + '\nService: ' + service;
+  }
+
+  /* ── SMS SUBMIT ── */
+  function submitSMS() {
+    if (!validate()) return;
+    const msg = encodeURIComponent(buildMsgText());
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const sep = isIOS ? '&' : '?';
+    window.location.href = 'sms:+14156189200' + sep + 'body=' + msg;
+    showToast('✅ Opening SMS app…');
+  }
+
+  /* ── EMAIL SUBMIT via Formspree ── */
+  function submitEmail() {
+    if (!validate()) return;
+    const name    = document.getElementById('name').value;
+    const phone   = document.getElementById('phone').value;
+    const service = document.getElementById('service').value;
+    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+    const formData = new FormData();
+    formData.append('email', 'thewebswann@gmail.com');
+    formData.append('_subject', 'New Appointment Request - J&L Tax Inc.');
+    formData.append('name', name);
+    formData.append('phone', phone);
+    formData.append('appointment_date', dateStr);
+    formData.append('appointment_time', selectedTime);
+    formData.append('service', service);
+    formData.append('message', buildMsgText());
+
+    fetch('https://formspree.io/f/xdawgygk', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(res) {
+      if (res.ok) {
+        showToast('✅ Request sent! We\'ll be in touch soon.');
+      } else {
+        showToast('⚠️ Something went wrong. Please try SMS.');
+      }
+    })
+    .catch(function() {
+      showToast('⚠️ Network error. Please try SMS.');
+    });
+  }
+
+  /* ── SIDE PANEL ── */
+  function togglePanel() {
+    document.getElementById('side-panel').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+
+  function updateCount() {
+    document.getElementById('char-num').textContent =
+      document.getElementById('q-message').value.length;
+  }
+
+  function sendQuestion() {
+    const name  = document.getElementById('q-name').value.trim();
+    const phone = document.getElementById('q-phone').value.trim();
+    const msg   = document.getElementById('q-message').value.trim();
+    if (!name || !phone || !msg) { showToast('⚠️ Please fill in all fields'); return; }
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const sep = isIOS ? '&' : '?';
+    const full = encodeURIComponent('Question - J&L Tax\nFrom: ' + name + '\nPhone: ' + phone + '\nMessage: ' + msg);
+    window.location.href = 'sms:+14156189200' + sep + 'body=' + full;
+    showToast('✅ Opening SMS…');
+    togglePanel();
+  }
+
+  /* ── TOAST ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3200);
+  }
+
+  /* ── INIT ── */
+  renderCalendar();
+
+  document.getElementById('question-trigger-btn').addEventListener('click', togglePanel);
+  document.getElementById('panel-close-btn').addEventListener('click', togglePanel);
+  document.getElementById('overlay').addEventListener('click', togglePanel);
+
+</script>
+</body>
+</html>
