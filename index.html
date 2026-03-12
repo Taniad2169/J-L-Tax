@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J&L Tax Inc. – Book an Appointment</title>
+<title>J&L Tax Inc. – Book Appointment with Smooth Scroll</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -118,17 +118,6 @@
     margin-top: 10px; font-weight: 300; letter-spacing: 0.5px;
     position: relative; z-index: 1;
   }
-  .hero-services {
-    display: flex; flex-wrap: wrap; gap: 8px;
-    justify-content: center; margin-top: 26px;
-    position: relative; z-index: 1;
-  }
-  .hero-services span {
-    background: rgba(255,255,255,0.13);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fff; padding: 5px 14px; border-radius: 20px;
-    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.3px;
-  }
 
   /* ── CARD ── */
   .card {
@@ -159,7 +148,7 @@
     display: block; font-size: 0.87rem; font-weight: 600;
     color: var(--navy); margin-bottom: 7px;
   }
-  input[type="text"], input[type="tel"], select, textarea {
+  input[type="text"], input[type="tel"], input[type="email"], select, textarea {
     width: 100%; padding: 12px 16px;
     border: 1.5px solid var(--border); border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-size: 0.97rem;
@@ -227,14 +216,19 @@
   .cal-day.disabled { color: #c5cce0; cursor: not-allowed; background: none; }
   .cal-day.empty { cursor: default; }
 
-  /* ── SMOOTH REVEAL ── */
+  /* ── SMOOTH REVEAL SECTIONS ── */
   .reveal-section {
     max-height: 0; overflow: hidden;
-    transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+    transition: max-height 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.5s ease, margin 0.4s ease;
     opacity: 0;
+    margin: 0;
     scroll-margin-top: 80px;
   }
-  .reveal-section.visible { max-height: 1000px; opacity: 1; }
+  .reveal-section.visible {
+    max-height: 800px;
+    opacity: 1;
+    margin: 20px 0;
+  }
 
   /* ── TIME GRID ── */
   .time-grid {
@@ -286,7 +280,7 @@
   }
   .btn-email:hover { box-shadow: 0 6px 26px rgba(26,42,108,0.4); transform: translateY(-1px); }
 
-  /* ── SIDE PANEL ── */
+  /* ── SIDE PANEL (QUESTIONS) ── */
   .overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(10,15,40,0.38); z-index: 98;
@@ -334,60 +328,7 @@
   }
   .btn-panel-sms:hover { box-shadow: 0 6px 24px rgba(224,123,0,0.48); transform: translateY(-1px); }
 
-  /* ── GOOGLE CALENDAR ── */
-  function revealGcal() {
-    var sec = document.getElementById('gcal-section');
-    sec.classList.add('visible');
-    setTimeout(function() {
-      var headerHeight = 56;
-      var bar = document.querySelector('.top-bar');
-      if (bar) headerHeight = bar.offsetHeight;
-      var top = sec.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
-      window.scrollTo({ top: top, behavior: 'smooth' });
-    }, 350);
-  }
-
-  function addToGoogleCalendar() {
-    if (!selectedDate || !selectedTime || !document.getElementById('service').value) {
-      showToast('⚠️ Please complete the form first'); return;
-    }
-    var name    = document.getElementById('name').value || 'Client';
-    var service = document.getElementById('service').value;
-    var phone   = document.getElementById('phone').value || '';
-
-    // Build start datetime
-    var timeParts = selectedTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
-    var hours = parseInt(timeParts[1]);
-    var mins  = parseInt(timeParts[2]);
-    var ampm  = timeParts[3].toUpperCase();
-    if (ampm === 'PM' && hours !== 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0;
-
-    var start = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), hours, mins, 0);
-    var end   = new Date(start.getTime() + 60 * 60 * 1000); // 1 hour
-
-    function pad(n) { return n < 10 ? '0' + n : n; }
-    function gcalDate(d) {
-      return d.getFullYear() + '' + pad(d.getMonth()+1) + '' + pad(d.getDate()) +
-             'T' + pad(d.getHours()) + '' + pad(d.getMinutes()) + '00';
-    }
-
-    var title   = encodeURIComponent('Appointment: ' + service + ' - ' + name);
-    var details = encodeURIComponent('Client: ' + name + '\nPhone: ' + phone + '\nService: ' + service + '\n\nBooked via J&L Tax Inc.');
-    var location = encodeURIComponent('142 Rockaway Ave, Valley Stream, NY 11580');
-    var dates   = gcalDate(start) + '/' + gcalDate(end);
-
-    var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
-              '&text=' + title +
-              '&dates=' + dates +
-              '&details=' + details +
-              '&location=' + location +
-              '&sf=true&output=xml';
-
-    window.open(url, '_blank');
-  }
-
-    /* ── TOAST ── */
+  /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 30px; left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -399,81 +340,6 @@
     z-index: 200; pointer-events: none; white-space: nowrap;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ── GOOGLE CALENDAR CARD ── */
-  .gcal-card {
-    display: flex; align-items: center; gap: 16px;
-    background: linear-gradient(135deg, #f0f7ff, #e8f5e9);
-    border: 2px solid #4285F4;
-    border-radius: 14px; padding: 18px 20px;
-    margin-top: 24px; flex-wrap: wrap;
-  }
-  .gcal-icon { font-size: 2rem; flex-shrink: 0; }
-  .gcal-text { flex: 1; min-width: 140px; }
-  .gcal-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem; font-weight: 700;
-    color: var(--navy); margin-bottom: 3px;
-  }
-  .gcal-sub { font-size: 0.83rem; color: var(--gray); }
-  .btn-gcal {
-    display: flex; align-items: center; gap: 9px;
-    background: #4285F4; color: #fff;
-    border: none; border-radius: 10px;
-    padding: 11px 18px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem; font-weight: 600;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 3px 14px rgba(66,133,244,0.35);
-    white-space: nowrap;
-  }
-  .btn-gcal:hover {
-    background: #1a6ee8;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 20px rgba(66,133,244,0.5);
-  }
-  .gcal-note {
-    font-size: 0.8rem; color: var(--gray);
-    margin-top: 12px; text-align: center;
-    padding: 8px 12px;
-    background: rgba(66,133,244,0.06);
-    border-radius: 8px; line-height: 1.5;
-  }
-
-  footer {
-    text-align: center; padding: 36px 16px 28px;
-    color: #14395d; font-size: 0.85rem; line-height: 1.9;
-    border-top: 1px solid var(--border);
-  }
-  footer strong { color: var(--navy); }
-  .footer-disclaimer {
-    font-size: 0.75rem; color: #14395d;
-    max-width: 560px; margin: 14px auto 0;
-    line-height: 1.7; padding: 12px 16px;
-    background: #f7f8fc;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-  }
-  .footer-disclaimer span { display: block; margin-bottom: 4px; }
-  .footer-copy {
-    font-size: 0.72rem; color: #14395d;
-    margin-top: 16px; letter-spacing: 0.2px;
-  }
-  .footer-powered {
-    font-size: 0.7rem; color: #14395d;
-    margin-top: 6px; letter-spacing: 0.3px;
-  }
-  .footer-powered a {
-    color: #0ce1e8; text-decoration: none;
-    font-weight: 700; transition: opacity 0.2s;
-  }
-  .footer-powered a:hover { opacity: 0.75; }
-
-  @media(max-width:560px) {
-    .card { padding: 26px 18px 36px; margin: -20px 12px 0; }
-    .side-panel { width: 94vw; right: -98vw; }
-    .top-bar { padding: 10px 14px; }
-  }
 
   /* ── ADMIN LINK BTN ── */
   .admin-link-btn {
@@ -497,7 +363,7 @@
   /* ── LOGIN MODAL ── */
   .login-modal {
     background: #fff; border-radius: 20px;
-    padding: 44px 36px; width: 340px; max-width: 92vw;
+    padding: 44px 36px; width: 380px; max-width: 92vw;
     box-shadow: 0 20px 60px rgba(26,42,108,0.25);
     text-align: center;
   }
@@ -507,12 +373,12 @@
     font-size: 1.5rem; font-weight: 700;
     color: var(--navy); margin-bottom: 6px;
   }
-  .login-modal p { color: var(--gray); font-size: 0.88rem; margin-bottom: 24px; }
+  .login-modal p { color: var(--gray); font-size: 0.88rem; margin-bottom: 20px; }
   .login-modal input {
     width: 100%; padding: 12px 16px;
     border: 1.5px solid var(--border); border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-size: 1rem;
-    outline: none; text-align: center; letter-spacing: 3px;
+    outline: none;
     margin-bottom: 16px;
   }
   .login-modal input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(35,65,168,0.1); }
@@ -524,13 +390,36 @@
     font-family: 'DM Sans', sans-serif; font-size: 1rem;
     font-weight: 600; cursor: pointer;
     box-shadow: 0 4px 18px rgba(26,42,108,0.28);
-    transition: all 0.2s;
+    transition: all 0.2s; margin-bottom: 10px;
   }
   .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(26,42,108,0.4); }
+  .forgot-password-link {
+    background: none; border: none;
+    color: var(--blue); font-size: 0.85rem;
+    cursor: pointer; text-decoration: underline;
+    margin-top: 10px;
+  }
   .btn-cancel-login {
     margin-top: 12px; background: none; border: none;
     color: var(--gray); font-size: 0.88rem; cursor: pointer;
     text-decoration: underline;
+  }
+
+  /* ── FORGOT PASSWORD MODAL ── */
+  .forgot-modal {
+    background: #fff; border-radius: 20px;
+    padding: 44px 36px; width: 400px; max-width: 92vw;
+    box-shadow: 0 20px 60px rgba(26,42,108,0.25);
+  }
+  .forgot-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--navy); margin-bottom: 10px;
+  }
+  .forgot-modal .security-question {
+    background: #f0f3ff; padding: 12px;
+    border-radius: 8px; margin: 15px 0;
+    font-weight: 500; color: var(--navy);
   }
 
   /* ── DASHBOARD ── */
@@ -646,7 +535,7 @@
     transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
     border-top: 1.5px solid var(--border);
   }
-  .appt-card.expanded .appt-card-body { max-height: 600px; }
+  .appt-card.expanded .appt-card-body { max-height: 800px; }
   .appt-card-inner { padding: 20px; }
 
   .appt-detail-grid {
@@ -658,14 +547,14 @@
     letter-spacing: 1px; text-transform: uppercase;
     color: var(--orange); margin-bottom: 4px; display: block;
   }
-  .appt-detail-item input {
+  .appt-detail-item input, .appt-detail-item select {
     width: 100%; padding: 9px 12px;
     border: 1.5px solid var(--border); border-radius: 8px;
     font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
     color: var(--navy); background: #fafbff;
     outline: none;
   }
-  .appt-detail-item input:focus {
+  .appt-detail-item input:focus, .appt-detail-item select:focus {
     border-color: var(--blue);
     box-shadow: 0 0 0 3px rgba(35,65,168,0.08);
   }
@@ -719,47 +608,19 @@
     text-align: center; padding: 60px 20px;
     color: var(--gray);
   }
-  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 14px; }
-  .empty-state h3 {
-    font-family: 'Playfair Display', serif;
-    color: var(--navy); margin-bottom: 8px;
+
+  footer {
+    text-align: center; padding: 36px 16px 28px;
+    color: #14395d; font-size: 0.85rem; line-height: 1.9;
+    border-top: 1px solid var(--border);
   }
 
   @media(max-width:560px) {
+    .card { padding: 26px 18px 36px; margin: -20px 12px 0; }
+    .side-panel { width: 94vw; right: -98vw; }
+    .top-bar { padding: 10px 14px; }
     .appt-detail-grid { grid-template-columns: 1fr; }
-    .dash-body { padding: 18px 14px; }
   }
-
-
-  /* ── SHARE BUTTON ── */
-  .share-bar {
-    display: flex; justify-content: center;
-    margin-top: 22px; position: relative; z-index: 1;
-  }
-  .btn-share {
-    display: flex; align-items: center; gap: 9px;
-    background: rgba(255,255,255,0.12);
-    border: 2px solid rgba(255,255,255,0.5);
-    color: #fff; padding: 11px 26px;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.92rem; font-weight: 700;
-    cursor: pointer; letter-spacing: 0.4px;
-    transition: all 0.2s;
-    backdrop-filter: blur(4px);
-  }
-  .btn-share:hover {
-    background: rgba(255,255,255,0.22);
-    border-color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 22px rgba(0,0,0,0.2);
-  }
-  .btn-share .share-icon { font-size: 1.1rem; }
-  .share-copied {
-    background: var(--orange) !important;
-    border-color: var(--orange) !important;
-  }
-
 </style>
 </head>
 <body>
@@ -767,37 +628,23 @@
 <!-- ── STICKY HEADER ── -->
 <div class="top-bar">
   <div class="top-bar-brand">J<span>&</span>L Tax Inc.</div>
-  <button class="admin-link-btn" onclick="showAdminLogin()">&#128274; Admin</button>
-  <button class="question-btn" id="question-trigger-btn">
-    <div class="q-pulse"></div>
-    Questions? Click Here &nbsp;💬
-  </button>
+  <div style="display: flex; gap: 10px;">
+    <button class="admin-link-btn" onclick="showAdminLogin()">🔐 Admin</button>
+    <button class="question-btn" id="question-trigger-btn">
+      <div class="q-pulse"></div>
+      Questions? Click Here 💬
+    </button>
+  </div>
 </div>
 
 <!-- ── HERO ── -->
 <div class="hero">
   <div class="logo-ring"><span>J&L</span></div>
   <h1>J<span>&</span>L Tax <span>Inc.</span></h1>
-  <p class="subtitle">Accounting · Audit &amp; Tax Services &nbsp;|&nbsp; Professional Accountants</p>
-  <div class="hero-services">
-    <span>Tax Preparation</span>
-    <span>Payroll / 1099</span>
-    <span>Bookkeeping</span>
-    <span>ITIN Processing</span>
-    <span>Sales Tax</span>
-    <span>Tax Resolution</span>
-    <span>IRS Representation</span>
-    <span>Entity Formation</span>
-  </div>
-  <div class="share-bar">
-    <button class="btn-share" id="share-btn" onclick="shareApp()">
-      <span class="share-icon">&#128279;</span>
-      Click Here to Share This App
-    </button>
-  </div>
+  <p class="subtitle">Accounting · Audit & Tax Services · Professional Accountants</p>
 </div>
 
-<!-- ── MAIN CARD ── -->
+<!-- ── MAIN CARD (FRONT OFFICE - CLIENT VIEW) ── -->
 <div class="card">
 
   <!-- STEP 1: DATE -->
@@ -806,13 +653,12 @@
   <div class="form-group">
     <div class="calendar-wrap">
       <div class="cal-header">
-        <button onclick="changeMonth(-1)">&#8249;</button>
+        <button onclick="changeMonth(-1)">‹</button>
         <span id="cal-month-label"></span>
-        <button onclick="changeMonth(1)">&#8250;</button>
+        <button onclick="changeMonth(1)">›</button>
       </div>
       <div class="cal-days-header">
-        <div>Su</div><div>Mo</div><div>Tu</div>
-        <div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+        <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
     </div>
@@ -835,27 +681,23 @@
       <label for="service">Select a Service</label>
       <select id="service" onchange="onServiceChange()">
         <option value="" disabled selected>-- Choose a service --</option>
-        <option>Tax Preparation &amp; Planning</option>
+        <option>Tax Preparation & Planning</option>
         <option>Payroll / 1099 Processing</option>
         <option>Bookkeeping</option>
         <option>ITIN Processing</option>
         <option>Sales Tax</option>
         <option>Tax Resolution</option>
         <option>IRS Representation / Audit Defense</option>
-        <option>Entity Formation (INC / S-Corp / LLC / LP)</option>
-        <option>Other / General Inquiry</option>
+        <option>Entity Formation</option>
       </select>
     </div>
   </div>
 
-  <!-- STEP 4: YOUR INFO + SUBMIT (reveals after service) -->
+  <!-- STEP 4: YOUR INFO (reveals after service) -->
   <div class="reveal-section" id="info-section">
     <div class="section-divider"></div>
     <div class="step-label">Step 4 of 4</div>
     <div class="step-title">Your Information</div>
-    <p style="color:var(--gray);font-size:0.9rem;margin-bottom:22px;">
-      Almost done! Just your name and number so we can confirm your appointment.
-    </p>
     <div class="form-group">
       <label for="name">Full Name</label>
       <input type="text" id="name" placeholder="John Smith" oninput="updateSummary()">
@@ -864,58 +706,28 @@
       <label for="phone">Phone Number</label>
       <input type="tel" id="phone" placeholder="(718) 000-0000" oninput="updateSummary()">
     </div>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="john@example.com" oninput="updateSummary()">
+    </div>
 
     <div class="section-divider"></div>
-    <div class="step-label">Review &amp; Send</div>
-    <div class="step-title" style="margin-bottom:14px;">Your Appointment Summary</div>
     <div class="summary-box" id="summary-box"></div>
 
     <div class="btn-row">
       <button class="btn btn-sms" onclick="submitSMS()">📱 Send via SMS</button>
       <button class="btn btn-email" onclick="submitEmail()">✉️ Send via Email</button>
-
-    <!-- GOOGLE CALENDAR REVEAL -->
-    <div class="reveal-section" id="gcal-section">
-      <div class="gcal-card">
-        <div class="gcal-icon">&#128197;</div>
-        <div class="gcal-text">
-          <div class="gcal-title">Save to Google Calendar</div>
-          <div class="gcal-sub">Add this appointment so you don't miss it!</div>
-        </div>
-        <button class="btn-gcal" onclick="addToGoogleCalendar()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect x="3" y="4" width="18" height="17" rx="2" fill="#fff" stroke="#4285F4" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 9h18" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round"/><path d="M8 14l2.5 2.5L16 11" stroke="#34A853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Add to Google Calendar
-        </button>
-      </div>
-      <p class="gcal-note">&#9889; <strong>Coming soon:</strong> Automatic calendar sync &amp; real-time availability &mdash; no double bookings, ever.</p>
     </div>
-
   </div>
-
-</div><!-- /card -->
+</div>
 
 <footer>
-  <strong>J&amp;L Tax Inc.</strong> &nbsp;&middot;&nbsp; 142 Rockaway Ave, Valley Stream, NY 11580<br>
-  &#9990; 718.277.0200 &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c4946435f495c446c464d424840584d54024f4341">[email&#160;protected]</a> &nbsp;&middot;&nbsp; jandltax.com
-
-  <div class="footer-disclaimer">
-    <span>&#128274; <strong>Privacy Notice:</strong> The information you provide is collected solely for the purpose of assisting you with the service you request.</span>
-    We do not share, sell, or disclose your personal information to any third parties.
-  </div>
-
-  <div class="footer-copy">
-    &copy; 2026 J&amp;L Tax Inc. All rights reserved.
-  </div>
-
-  <div class="footer-powered">
-    Powered by &nbsp;<a href="https://webswan-menu-pricing.netlify.app/" target="_blank" rel="noopener">The WebSwan</a>&nbsp; &mdash; Click here to book your demo
-  </div>
+  <strong>J&L Tax Inc.</strong> · 142 Rockaway Ave, Valley Stream, NY 11580<br>
+  📞 718.277.0200 · 📧 appointments@jandltax.com
 </footer>
 
-<!-- OVERLAY -->
+<!-- OVERLAY & SIDE PANEL (QUESTIONS) -->
 <div class="overlay" id="overlay"></div>
-
-<!-- ── SIDE PANEL ── -->
 <div class="side-panel" id="side-panel">
   <button class="panel-close" id="panel-close-btn">✕</button>
   <div class="panel-title">Got a <span>Question?</span></div>
@@ -931,522 +743,17 @@
     </div>
     <div class="form-group">
       <label>Your Message</label>
-      <textarea id="q-message" maxlength="500" placeholder="Type your question here…" oninput="updateCount()"></textarea>
+      <textarea id="q-message" maxlength="500" placeholder="Type your question here…" oninput="updateQuestionCount()"></textarea>
       <div class="char-count"><span id="char-num">0</span> / 500</div>
     </div>
     <button class="btn-panel-sms" onclick="sendQuestion()">📱 Send Question via SMS</button>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- TOAST NOTIFICATION -->
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* ── STATE ── */
-  let selectedDate = null;
-  let selectedTime = null;
-  let currentMonth = new Date().getMonth();
-  let currentYear  = new Date().getFullYear();
-  const MONTHS = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-
-  /* ── CALENDAR ── */
-  function renderCalendar() {
-    document.getElementById('cal-month-label').textContent = MONTHS[currentMonth] + ' ' + currentYear;
-    const grid  = document.getElementById('cal-grid');
-    grid.innerHTML = '';
-    const first = new Date(currentYear, currentMonth, 1).getDay();
-    const days  = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const today = new Date();
-
-    for (let i = 0; i < first; i++) {
-      const e = document.createElement('button');
-      e.className = 'cal-day empty'; e.disabled = true;
-      grid.appendChild(e);
-    }
-    for (let d = 1; d <= days; d++) {
-      const date = new Date(currentYear, currentMonth, d);
-      const dow  = date.getDay();
-      const isWeekend = (dow === 0 || dow === 6);
-      const isPast    = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const el = document.createElement('button');
-      el.className = 'cal-day';
-      el.textContent = d;
-      if (isWeekend || isPast) {
-        el.classList.add('disabled'); el.disabled = true;
-      } else {
-        if (date.toDateString() === today.toDateString()) el.classList.add('today');
-        if (selectedDate && selectedDate.toDateString() === date.toDateString()) el.classList.add('selected');
-        el.onclick = (function(d2, el2){ return function(){ selectDate(d2, el2); }; })(date, el);
-      }
-      grid.appendChild(el);
-    }
-  }
-
-  function changeMonth(dir) {
-    currentMonth += dir;
-    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-    if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
-    renderCalendar();
-  }
-
-  function selectDate(date, el) {
-    selectedDate = date;
-    selectedTime = null;
-    document.querySelectorAll('.cal-day').forEach(function(b){ b.classList.remove('selected'); });
-    el.classList.add('selected');
-    // reset downstream steps
-    document.getElementById('service-section').classList.remove('visible');
-    document.getElementById('info-section').classList.remove('visible');
-    document.getElementById('service').value = '';
-    buildTimeGrid();
-    smoothReveal('time-section');
-  }
-
-  /* ── TIME ── */
-  function buildTimeGrid() {
-    const grid = document.getElementById('time-grid');
-    grid.innerHTML = '';
-    for (let h = 8; h < 17; h++) {
-      ['00','30'].forEach(function(min) {
-        if (h === 16 && min === '30') return;
-        const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
-        const ampm   = h < 12 ? 'AM' : 'PM';
-        const lbl    = hour12 + ':' + min + ' ' + ampm;
-        const btn    = document.createElement('button');
-        btn.className   = 'time-btn';
-        btn.textContent = lbl;
-        btn.onclick     = (function(l, b){ return function(){ selectTime(l, b); }; })(lbl, btn);
-        grid.appendChild(btn);
-      });
-    }
-  }
-
-  function selectTime(time, el) {
-    selectedTime = time;
-    document.querySelectorAll('.time-btn').forEach(function(b){ b.classList.remove('selected'); });
-    el.classList.add('selected');
-    // reset downstream
-    document.getElementById('info-section').classList.remove('visible');
-    document.getElementById('service').value = '';
-    smoothReveal('service-section');
-  }
-
-  /* ── SERVICE ── */
-  function onServiceChange() {
-    smoothReveal('info-section');
-    updateSummary();
-  }
-
-  /* ── SMOOTH REVEAL + SCROLL ── */
-  function smoothReveal(id) {
-    var el = document.getElementById(id);
-    el.classList.add('visible');
-    setTimeout(function() {
-      var headerHeight = 56;
-      var bar = document.querySelector('.top-bar');
-      if (bar) headerHeight = bar.offsetHeight;
-      var top = el.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
-      window.scrollTo({ top: top, behavior: 'smooth' });
-    }, 350);
-  }
-
-  /* ── SUMMARY ── */
-  function updateSummary() {
-    const box     = document.getElementById('summary-box');
-    const service = document.getElementById('service').value;
-    const name    = document.getElementById('name').value;
-    const phone   = document.getElementById('phone').value;
-    if (!selectedDate) return;
-    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    let html = '<b>📅 Date:</b> ' + dateStr + '<br>';
-    if (selectedTime) html += '<b>⏰ Time:</b> ' + selectedTime + '<br>';
-    if (service)      html += '<b>🗂 Service:</b> ' + service + '<br>';
-    if (name)         html += '<b>👤 Name:</b> ' + name + '<br>';
-    if (phone)        html += '<b>📞 Phone:</b> ' + phone;
-    box.innerHTML = html;
-    box.style.display = 'block';
-  }
-
-  /* ── VALIDATE ── */
-  function validate() {
-    if (!selectedDate)  { showToast('⚠️ Please pick a date'); return false; }
-    if (!selectedTime)  { showToast('⚠️ Please choose a time'); return false; }
-    if (!document.getElementById('service').value) { showToast('⚠️ Please select a service'); return false; }
-    if (!document.getElementById('name').value.trim()) { showToast('⚠️ Please enter your name'); return false; }
-    if (!document.getElementById('phone').value.trim()) { showToast('⚠️ Please enter your phone number'); return false; }
-    return true;
-  }
-
-  function buildMsgText() {
-    const name    = document.getElementById('name').value;
-    const phone   = document.getElementById('phone').value;
-    const service = document.getElementById('service').value;
-    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-    return 'New Appt - J&L Tax\nName: ' + name + '\nPhone: ' + phone +
-           '\nDate: ' + dateStr + '\nTime: ' + selectedTime + '\nService: ' + service;
-  }
-
-  /* ── SMS SUBMIT ── */
-  function submitSMS() {
-    if (!validate()) return;
-    const msg = encodeURIComponent(buildMsgText());
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const sep = isIOS ? '&' : '?';
-    window.location.href = 'sms:+14156189200' + sep + 'body=' + msg;
-    saveAppointment();
-    showToast('✅ Opening SMS app…');
-    revealGcal();
-  }
-
-  /* ── EMAIL SUBMIT via Formspree ── */
-  function submitEmail() {
-    if (!validate()) return;
-    const name    = document.getElementById('name').value;
-    const phone   = document.getElementById('phone').value;
-    const service = document.getElementById('service').value;
-    const dateStr = selectedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-
-    const formData = new FormData();
-    formData.append('email', 'thewebswann@gmail.com');
-    formData.append('_subject', 'New Appointment Request - J&L Tax Inc.');
-    formData.append('name', name);
-    formData.append('phone', phone);
-    formData.append('appointment_date', dateStr);
-    formData.append('appointment_time', selectedTime);
-    formData.append('service', service);
-    formData.append('message', buildMsgText());
-
-    fetch('https://formspree.io/f/xdawgygk', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    })
-    .then(function(res) {
-      if (res.ok) {
-        saveAppointment();
-        showToast('✅ Request sent! We\'ll be in touch soon.');
-        revealGcal();
-      } else {
-        showToast('⚠️ Something went wrong. Please try SMS.');
-      }
-    })
-    .catch(function() {
-      showToast('⚠️ Network error. Please try SMS.');
-    });
-  }
-
-  /* ── SIDE PANEL ── */
-  function togglePanel() {
-    document.getElementById('side-panel').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('show');
-  }
-
-  function updateCount() {
-    document.getElementById('char-num').textContent =
-      document.getElementById('q-message').value.length;
-  }
-
-  function sendQuestion() {
-    const name  = document.getElementById('q-name').value.trim();
-    const phone = document.getElementById('q-phone').value.trim();
-    const msg   = document.getElementById('q-message').value.trim();
-    if (!name || !phone || !msg) { showToast('⚠️ Please fill in all fields'); return; }
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const sep = isIOS ? '&' : '?';
-    const full = encodeURIComponent('Question - J&L Tax\nFrom: ' + name + '\nPhone: ' + phone + '\nMessage: ' + msg);
-    window.location.href = 'sms:+14156189200' + sep + 'body=' + full;
-    showToast('✅ Opening SMS…');
-    togglePanel();
-  }
-
-  /* ── GOOGLE CALENDAR ── */
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(function(){ t.classList.remove('show'); }, 3200);
-  }
-
-
-  /* ════════════════════════════════
-     ADMIN DASHBOARD
-  ════════════════════════════════ */
-  var ADMIN_PW = 'admin123';
-
-  function showAdminLogin() {
-    document.getElementById('login-modal').classList.add('show');
-    setTimeout(function(){ document.getElementById('admin-pw').focus(); }, 100);
-  }
-  function closeAdminLogin() {
-    document.getElementById('login-modal').classList.remove('show');
-    document.getElementById('admin-pw').value = '';
-    document.getElementById('login-error').style.display = 'none';
-  }
-  function doLogin() {
-    var pw = document.getElementById('admin-pw').value;
-    if (pw === ADMIN_PW) {
-      closeAdminLogin();
-      openDashboard();
-    } else {
-      document.getElementById('login-error').style.display = 'block';
-      document.getElementById('admin-pw').value = '';
-      document.getElementById('admin-pw').focus();
-    }
-  }
-  function doLogout() {
-    document.getElementById('dashboard').classList.remove('show');
-  }
-  function openDashboard() {
-    renderDashboard();
-    document.getElementById('dashboard').classList.add('show');
-    window.scrollTo(0,0);
-  }
-
-  /* ── STORAGE ── */
-  function getAppointments() {
-    try {
-      return JSON.parse(localStorage.getItem('jandl_appointments') || '[]');
-    } catch(e) { return []; }
-  }
-  function saveAppointments(arr) {
-    localStorage.setItem('jandl_appointments', JSON.stringify(arr));
-  }
-
-  /* ── SAVE NEW APPOINTMENT (called on submit) ── */
-  function saveAppointment() {
-    var name    = document.getElementById('name').value.trim();
-    var phone   = document.getElementById('phone').value.trim();
-    var service = document.getElementById('service').value;
-    if (!name || !phone || !service || !selectedDate || !selectedTime) return;
-
-    var appts = getAppointments();
-    var appt = {
-      id:      Date.now().toString(),
-      name:    name,
-      phone:   phone,
-      service: service,
-      date:    selectedDate.toISOString(),
-      time:    selectedTime,
-      notes:   '',
-      created: new Date().toISOString()
-    };
-    appts.unshift(appt);
-    saveAppointments(appts);
-  }
-
-  /* ── RENDER DASHBOARD ── */
-  function renderDashboard() {
-    var appts = getAppointments();
-    var now   = new Date();
-    var todayStr = now.toDateString();
-    var weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - now.getDay());
-
-    var total = appts.length;
-    var today = appts.filter(function(a){ return new Date(a.date).toDateString() === todayStr; }).length;
-    var week  = appts.filter(function(a){ var d=new Date(a.date); return d>=weekStart && d<=now; }).length;
-
-    document.getElementById('stat-total').textContent = total;
-    document.getElementById('stat-today').textContent = today;
-    document.getElementById('stat-week').textContent  = week;
-    document.getElementById('appt-count-badge').textContent = total;
-
-    var list = document.getElementById('appt-list');
-    list.innerHTML = '';
-
-    if (appts.length === 0) {
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128203;</div><h3>No appointments yet</h3><p>Appointments will appear here once clients submit the booking form.</p></div>';
-      return;
-    }
-
-    appts.forEach(function(a) {
-      var d = new Date(a.date);
-      var dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-      var initials = a.name.split(' ').map(function(w){ return w[0]||''; }).slice(0,2).join('').toUpperCase();
-
-      var card = document.createElement('div');
-      card.className = 'appt-card';
-      card.id = 'card-' + a.id;
-
-      // ── HEADER ──
-      var header = document.createElement('div');
-      header.className = 'appt-card-header';
-      header.innerHTML =
-        '<div class="appt-avatar">' + escHtml(initials) + '</div>' +
-        '<div class="appt-info">' +
-          '<div class="appt-name">' + escHtml(a.name) + '</div>' +
-          '<div class="appt-meta">&#128197; ' + escHtml(dateStr) + ' &nbsp;&bull;&nbsp; &#8987; ' + escHtml(a.time) + ' &nbsp;&bull;&nbsp; &#128222; ' + escHtml(a.phone) + '</div>' +
-        '</div>' +
-        '<span class="appt-service-tag">' + escHtml((a.service||'').split('/')[0].trim()) + '</span>' +
-        '<span class="appt-chevron">&#8964;</span>';
-      header.addEventListener('click', function(){ toggleCard(a.id); });
-
-      // ── BODY ──
-      var body = document.createElement('div');
-      body.className = 'appt-card-body';
-
-      var inner = document.createElement('div');
-      inner.className = 'appt-card-inner';
-
-      // Detail grid
-      var grid = document.createElement('div');
-      grid.className = 'appt-detail-grid';
-      grid.innerHTML =
-        '<div class="appt-detail-item"><label>Full Name</label><input type="text" id="edit-name-' + a.id + '" value="' + escAttr(a.name) + '"></div>' +
-        '<div class="appt-detail-item"><label>Phone</label><input type="tel" id="edit-phone-' + a.id + '" value="' + escAttr(a.phone) + '"></div>' +
-        '<div class="appt-detail-item"><label>Date</label><input type="text" id="edit-date-' + a.id + '" value="' + escAttr(dateStr) + '"></div>' +
-        '<div class="appt-detail-item"><label>Time</label><input type="text" id="edit-time-' + a.id + '" value="' + escAttr(a.time) + '"></div>' +
-        '<div class="appt-detail-item full"><label>Service</label><input type="text" id="edit-service-' + a.id + '" value="' + escAttr(a.service) + '"></div>' +
-        '<div class="appt-detail-item full">' +
-          '<label>Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--gray)">(max 100 words)</span></label>' +
-          '<textarea class="notes-area" id="edit-notes-' + a.id + '" maxlength="700" placeholder="Add a note about this client...">' + escHtml(a.notes || '') + '</textarea>' +
-          '<div class="notes-count"><span id="wc-' + a.id + '">' + wordCount(a.notes||'') + '</span> / 100 words</div>' +
-        '</div>';
-
-      // Wire up notes live word count
-      var notesTA = grid.querySelector('#edit-notes-' + a.id);
-      var wcSpan  = grid.querySelector('#wc-' + a.id);
-      notesTA.addEventListener('input', function(){
-        var words = wordCount(notesTA.value);
-        if (words > 100) {
-          notesTA.value = notesTA.value.trim().split(/\s+/).slice(0,100).join(' ');
-          words = 100;
-        }
-        wcSpan.textContent = words;
-      });
-
-      // Actions
-      var actions = document.createElement('div');
-      actions.className = 'appt-actions';
-
-      var btnSave = document.createElement('button');
-      btnSave.className = 'btn-save-appt';
-      btnSave.innerHTML = '&#10003; Save Changes';
-      btnSave.addEventListener('click', function(){ updateAppointment(a.id); });
-
-      var btnGcal = document.createElement('button');
-      btnGcal.className = 'btn-gcal-dash';
-      btnGcal.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" fill="#fff" stroke="#fff" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 9h18" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M8 14l2.5 2.5L16 11" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Google Calendar';
-      btnGcal.addEventListener('click', function(){ gcalFromDash(a.id); });
-
-      var btnDel = document.createElement('button');
-      btnDel.className = 'btn-delete-appt';
-      btnDel.innerHTML = '&#128465; Delete';
-      btnDel.addEventListener('click', function(){ deleteAppointment(a.id); });
-
-      actions.appendChild(btnSave);
-      actions.appendChild(btnGcal);
-      actions.appendChild(btnDel);
-
-      inner.appendChild(grid);
-      inner.appendChild(actions);
-      body.appendChild(inner);
-      card.appendChild(header);
-      card.appendChild(body);
-      list.appendChild(card);
-    });
-  }
-
-  function toggleCard(id) {
-    var card = document.getElementById('card-' + id);
-    if (card) card.classList.toggle('expanded');
-  }
-
-  function escHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function escAttr(str) {
-    return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-  function wordCount(str) {
-    return str.trim() === '' ? 0 : str.trim().split(/\s+/).length;
-  }
-
-  function updateAppointment(id) {
-    var appts = getAppointments();
-    var idx = appts.findIndex(function(a){ return a.id === id; });
-    if (idx === -1) return;
-    appts[idx].name    = document.getElementById('edit-name-' + id).value.trim();
-    appts[idx].phone   = document.getElementById('edit-phone-' + id).value.trim();
-    appts[idx].time    = document.getElementById('edit-time-' + id).value.trim();
-    appts[idx].service = document.getElementById('edit-service-' + id).value.trim();
-    appts[idx].notes   = document.getElementById('edit-notes-' + id).value;
-    saveAppointments(appts);
-    showToast('\u2705 Appointment updated!');
-    renderDashboard();
-    setTimeout(function(){ toggleCard(id); }, 60);
-  }
-
-  function deleteAppointment(id) {
-    if (!confirm('Delete this appointment? This cannot be undone.')) return;
-    var appts = getAppointments().filter(function(a){ return a.id !== id; });
-    saveAppointments(appts);
-    showToast('\uD83D\uDDD1\uFE0F Appointment deleted.');
-    renderDashboard();
-  }
-
-  function gcalFromDash(id) {
-    var appts = getAppointments();
-    var a = appts.find(function(x){ return x.id === id; });
-    if (!a) return;
-    var d = new Date(a.date);
-    var timeParts = a.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
-    if (!timeParts) { showToast('\u26a0\ufe0f Could not parse time'); return; }
-    var hours = parseInt(timeParts[1]);
-    var mins  = parseInt(timeParts[2]);
-    var ampm  = timeParts[3].toUpperCase();
-    if (ampm === 'PM' && hours !== 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0;
-    var start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, mins, 0);
-    var end   = new Date(start.getTime() + 60*60*1000);
-    function pad(n){ return n < 10 ? '0'+n : n; }
-    function gd(dt){ return dt.getFullYear()+''+pad(dt.getMonth()+1)+''+pad(dt.getDate())+'T'+pad(dt.getHours())+''+pad(dt.getMinutes())+'00'; }
-    var title   = encodeURIComponent('Appointment: ' + a.service + ' - ' + a.name);
-    var details = encodeURIComponent('Client: ' + a.name + '\nPhone: ' + a.phone + '\nService: ' + a.service + (a.notes ? '\nNotes: ' + a.notes : '') + '\n\nJ&L Tax Inc.');
-    var loc     = encodeURIComponent('142 Rockaway Ave, Valley Stream, NY 11580');
-    var dates   = gd(start) + '/' + gd(end);
-    var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+title+'&dates='+dates+'&details='+details+'&location='+loc+'&sf=true&output=xml';
-    window.open(url, '_blank');
-  }
-
-  /* ── SHARE APP ── */
-  function shareApp() {
-    var url = 'https://taniad2169.github.io/J-L-Tax/';
-    var btn = document.getElementById('share-btn');
-    // Try native share API first (mobile)
-    if (navigator.share) {
-      navigator.share({
-        title: 'J&L Tax Inc. – Book an Appointment',
-        text: 'Book your tax appointment online with J&L Tax Inc. in Valley Stream, NY!',
-        url: url
-      }).catch(function(){});
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(url).then(function() {
-        btn.innerHTML = '&#10003; Link Copied!';
-        btn.classList.add('share-copied');
-        setTimeout(function() {
-          btn.innerHTML = '<span class="share-icon">&#128279;</span> Click Here to Share This App';
-          btn.classList.remove('share-copied');
-        }, 2500);
-      }).catch(function() {
-        // Last fallback: open in new tab
-        window.open(url, '_blank');
-      });
-    }
-  }
-
-  /* ── INIT ── */
-  renderCalendar();
-
-  document.getElementById('question-trigger-btn').addEventListener('click', togglePanel);
-  document.getElementById('panel-close-btn').addEventListener('click', togglePanel);
-  document.getElementById('overlay').addEventListener('click', togglePanel);
-
-</script>
-
-<!-- ── LOGIN MODAL ── -->
+<!-- LOGIN MODAL -->
 <div class="modal-overlay" id="login-modal">
   <div class="login-modal">
     <div class="lock-icon">🔐</div>
@@ -1455,12 +762,27 @@
     <input type="password" id="admin-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
     <div class="login-error" id="login-error">Incorrect password. Try again.</div>
     <button class="btn-login" onclick="doLogin()">Sign In</button>
+    <button class="forgot-password-link" onclick="showForgotPassword()">Forgot Password?</button>
     <br>
     <button class="btn-cancel-login" onclick="closeAdminLogin()">Cancel</button>
   </div>
 </div>
 
-<!-- ── DASHBOARD ── -->
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgot-modal">
+  <div class="forgot-modal">
+    <h2>Reset Password</h2>
+    <p>Answer the security question to reset your password.</p>
+    <div class="security-question">What is your favorite color?</div>
+    <input type="text" id="security-answer" placeholder="Your answer" style="margin-bottom: 15px;">
+    <input type="password" id="new-password" placeholder="New password" style="margin-bottom: 15px;">
+    <div class="login-error" id="forgot-error" style="display: none;">Incorrect answer</div>
+    <button class="btn-login" onclick="resetPassword()">Reset Password</button>
+    <button class="btn-cancel-login" onclick="closeForgotModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- DASHBOARD (BACK OFFICE - OWNER VIEW) -->
 <div class="dashboard" id="dashboard">
   <div class="dash-header">
     <div class="dash-header-left">
@@ -1470,7 +792,7 @@
         <div class="dash-subtitle">Appointment Management</div>
       </div>
     </div>
-    <button class="btn-logout" onclick="doLogout()">&#128274; Log Out</button>
+    <button class="btn-logout" onclick="doLogout()">🔐 Log Out</button>
   </div>
 
   <div class="dash-body">
@@ -1493,5 +815,541 @@
       Appointments <span class="appt-count-badge" id="appt-count-badge">0</span>
     </div>
 
-    <div class="appt-list" id="appt-list">
-      <div class="emp
+    <div class="appt-list" id="appt-list"></div>
+  </div>
+</div>
+
+<script>
+  // ==================== STATE & GLOBALS ====================
+  let selectedDate = null;
+  let selectedTime = null;
+  let currentMonth = new Date().getMonth();
+  let currentYear  = new Date().getFullYear();
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  
+  // Admin credentials
+  let adminPassword = 'admin123';
+  const SECURITY_ANSWER = 'blue'; // Favorite color security question
+
+  // ==================== CALENDAR FUNCTIONS ====================
+  function renderCalendar() {
+    document.getElementById('cal-month-label').textContent = MONTHS[currentMonth] + ' ' + currentYear;
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    const first = new Date(currentYear, currentMonth, 1).getDay();
+    const days = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today = new Date();
+
+    for (let i = 0; i < first; i++) {
+      const e = document.createElement('button');
+      e.className = 'cal-day empty'; e.disabled = true;
+      grid.appendChild(e);
+    }
+    
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(currentYear, currentMonth, d);
+      const dow = date.getDay();
+      const isWeekend = (dow === 0 || dow === 6);
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const el = document.createElement('button');
+      el.className = 'cal-day';
+      el.textContent = d;
+      
+      if (isWeekend || isPast) {
+        el.classList.add('disabled'); el.disabled = true;
+      } else {
+        if (date.toDateString() === today.toDateString()) el.classList.add('today');
+        if (selectedDate && selectedDate.toDateString() === date.toDateString()) el.classList.add('selected');
+        el.onclick = function(d2) { return function() { selectDate(d2); }; }(date);
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar();
+  }
+
+  function selectDate(date) {
+    selectedDate = date;
+    selectedTime = null;
+    document.querySelectorAll('.cal-day').forEach(b => b.classList.remove('selected'));
+    event.target.classList.add('selected');
+    
+    // Reset downstream sections
+    document.getElementById('service-section').classList.remove('visible');
+    document.getElementById('info-section').classList.remove('visible');
+    document.getElementById('service').value = '';
+    
+    // Build time grid and reveal time section with smooth scroll
+    buildTimeGrid();
+    const timeSection = document.getElementById('time-section');
+    timeSection.classList.add('visible');
+    
+    setTimeout(() => {
+      const headerHeight = document.querySelector('.top-bar').offsetHeight;
+      const top = timeSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 100);
+  }
+
+  function buildTimeGrid() {
+    const grid = document.getElementById('time-grid');
+    grid.innerHTML = '';
+    for (let h = 8; h < 17; h++) {
+      ['00', '30'].forEach(min => {
+        if (h === 16 && min === '30') return;
+        const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+        const ampm = h < 12 ? 'AM' : 'PM';
+        const lbl = hour12 + ':' + min + ' ' + ampm;
+        const btn = document.createElement('button');
+        btn.className = 'time-btn';
+        btn.textContent = lbl;
+        btn.onclick = function() { selectTime(lbl, btn); };
+        grid.appendChild(btn);
+      });
+    }
+  }
+
+  function selectTime(time, btn) {
+    selectedTime = time;
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    
+    // Reveal service section with smooth scroll
+    const serviceSection = document.getElementById('service-section');
+    serviceSection.classList.add('visible');
+    
+    setTimeout(() => {
+      const headerHeight = document.querySelector('.top-bar').offsetHeight;
+      const top = serviceSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 100);
+  }
+
+  function onServiceChange() {
+    // Reveal info section with smooth scroll
+    const infoSection = document.getElementById('info-section');
+    infoSection.classList.add('visible');
+    updateSummary();
+    
+    setTimeout(() => {
+      const headerHeight = document.querySelector('.top-bar').offsetHeight;
+      const top = infoSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }, 100);
+  }
+
+  // ==================== SUMMARY & VALIDATION ====================
+  function updateSummary() {
+    const box = document.getElementById('summary-box');
+    const service = document.getElementById('service').value;
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    
+    if (!selectedDate) return;
+    
+    const dateStr = selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let html = '<b>📅 Date:</b> ' + dateStr + '<br>';
+    if (selectedTime) html += '<b>⏰ Time:</b> ' + selectedTime + '<br>';
+    if (service) html += '<b>🗂 Service:</b> ' + service + '<br>';
+    if (name) html += '<b>👤 Name:</b> ' + name + '<br>';
+    if (phone) html += '<b>📞 Phone:</b> ' + phone + '<br>';
+    if (email) html += '<b>✉️ Email:</b> ' + email;
+    
+    box.innerHTML = html;
+    box.style.display = 'block';
+  }
+
+  function validateForm() {
+    if (!selectedDate) { showToast('⚠️ Please pick a date'); return false; }
+    if (!selectedTime) { showToast('⚠️ Please choose a time'); return false; }
+    if (!document.getElementById('service').value) { showToast('⚠️ Please select a service'); return false; }
+    if (!document.getElementById('name').value.trim()) { showToast('⚠️ Please enter your name'); return false; }
+    if (!document.getElementById('phone').value.trim()) { showToast('⚠️ Please enter your phone number'); return false; }
+    if (!document.getElementById('email').value.trim()) { showToast('⚠️ Please enter your email'); return false; }
+    return true;
+  }
+
+  function buildAppointmentObject() {
+    return {
+      id: Date.now().toString(),
+      name: document.getElementById('name').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      service: document.getElementById('service').value,
+      date: selectedDate.toISOString(),
+      time: selectedTime,
+      notes: '',
+      created: new Date().toISOString()
+    };
+  }
+
+  // ==================== SMS & EMAIL SUBMISSION ====================
+  function submitSMS() {
+    if (!validateForm()) return;
+    
+    const appt = buildAppointmentObject();
+    saveAppointment(appt);
+    
+    const dateStr = selectedDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+    const msg = `J&L Tax Appt - ${appt.name}\nDate: ${dateStr} @ ${selectedTime}\nService: ${appt.service}\nPhone: ${appt.phone}`;
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const sep = isIOS ? '&' : '?';
+    window.location.href = 'sms:+14156189200' + sep + 'body=' + encodeURIComponent(msg);
+    showToast('✅ Opening SMS app…');
+  }
+
+  function submitEmail() {
+    if (!validateForm()) return;
+    
+    const appt = buildAppointmentObject();
+    saveAppointment(appt);
+    
+    const dateStr = selectedDate.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+    const subject = encodeURIComponent('New Appointment Request');
+    const body = encodeURIComponent(
+      `Name: ${appt.name}\nPhone: ${appt.phone}\nEmail: ${appt.email}\nDate: ${dateStr}\nTime: ${selectedTime}\nService: ${appt.service}`
+    );
+    
+    window.location.href = `mailto:appointments@jandltax.com?subject=${subject}&body=${body}`;
+    showToast('✅ Opening email app…');
+  }
+
+  // ==================== LOCAL STORAGE (APPOINTMENTS) ====================
+  function getAppointments() {
+    try {
+      return JSON.parse(localStorage.getItem('jandl_appointments') || '[]');
+    } catch(e) { return []; }
+  }
+
+  function saveAppointments(arr) {
+    localStorage.setItem('jandl_appointments', JSON.stringify(arr));
+  }
+
+  function saveAppointment(appt) {
+    const appts = getAppointments();
+    appts.unshift(appt);
+    saveAppointments(appts);
+  }
+
+  // ==================== SIDE PANEL (QUESTIONS) ====================
+  function togglePanel() {
+    document.getElementById('side-panel').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+
+  function updateQuestionCount() {
+    document.getElementById('char-num').textContent = document.getElementById('q-message').value.length;
+  }
+
+  function sendQuestion() {
+    const name = document.getElementById('q-name').value.trim();
+    const phone = document.getElementById('q-phone').value.trim();
+    const msg = document.getElementById('q-message').value.trim();
+    
+    if (!name || !phone || !msg) { showToast('⚠️ Please fill in all fields'); return; }
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const sep = isIOS ? '&' : '?';
+    const full = `Question - J&L Tax\nFrom: ${name}\nPhone: ${phone}\nMessage: ${msg}`;
+    window.location.href = 'sms:+14156189200' + sep + 'body=' + encodeURIComponent(full);
+    showToast('✅ Opening SMS…');
+    togglePanel();
+  }
+
+  // ==================== TOAST ====================
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ==================== ADMIN AUTH ====================
+  function showAdminLogin() {
+    document.getElementById('login-modal').classList.add('show');
+    setTimeout(() => document.getElementById('admin-pw').focus(), 100);
+  }
+
+  function closeAdminLogin() {
+    document.getElementById('login-modal').classList.remove('show');
+    document.getElementById('admin-pw').value = '';
+    document.getElementById('login-error').style.display = 'none';
+  }
+
+  function doLogin() {
+    const pw = document.getElementById('admin-pw').value;
+    if (pw === adminPassword) {
+      closeAdminLogin();
+      openDashboard();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('admin-pw').value = '';
+      document.getElementById('admin-pw').focus();
+    }
+  }
+
+  function showForgotPassword() {
+    closeAdminLogin();
+    document.getElementById('forgot-modal').classList.add('show');
+  }
+
+  function closeForgotModal() {
+    document.getElementById('forgot-modal').classList.remove('show');
+    document.getElementById('security-answer').value = '';
+    document.getElementById('new-password').value = '';
+    document.getElementById('forgot-error').style.display = 'none';
+  }
+
+  function resetPassword() {
+    const answer = document.getElementById('security-answer').value.trim().toLowerCase();
+    const newPw = document.getElementById('new-password').value;
+    
+    if (answer !== SECURITY_ANSWER) {
+      document.getElementById('forgot-error').style.display = 'block';
+      return;
+    }
+    
+    if (newPw.length < 4) {
+      showToast('Password must be at least 4 characters');
+      return;
+    }
+    
+    adminPassword = newPw;
+    closeForgotModal();
+    showToast('✅ Password updated! New password: ' + newPw);
+  }
+
+  function doLogout() {
+    document.getElementById('dashboard').classList.remove('show');
+  }
+
+  // ==================== DASHBOARD RENDERING ====================
+  function openDashboard() {
+    renderDashboard();
+    document.getElementById('dashboard').classList.add('show');
+    window.scrollTo(0, 0);
+  }
+
+  function renderDashboard() {
+    const appts = getAppointments();
+    const now = new Date();
+    const todayStr = now.toDateString();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay());
+
+    const total = appts.length;
+    const today = appts.filter(a => new Date(a.date).toDateString() === todayStr).length;
+    const week = appts.filter(a => { const d = new Date(a.date); return d >= weekStart && d <= now; }).length;
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-today').textContent = today;
+    document.getElementById('stat-week').textContent = week;
+    document.getElementById('appt-count-badge').textContent = total;
+
+    const list = document.getElementById('appt-list');
+    list.innerHTML = '';
+
+    if (appts.length === 0) {
+      list.innerHTML = '<div class="empty-state"><h3>No appointments yet</h3></div>';
+      return;
+    }
+
+    appts.forEach(a => {
+      const d = new Date(a.date);
+      const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const initials = a.name.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase();
+
+      const card = document.createElement('div');
+      card.className = 'appt-card';
+      card.id = 'card-' + a.id;
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'appt-card-header';
+      header.innerHTML = `
+        <div class="appt-avatar">${escapeHtml(initials)}</div>
+        <div class="appt-info">
+          <div class="appt-name">${escapeHtml(a.name)}</div>
+          <div class="appt-meta">📅 ${escapeHtml(dateStr)} · ⏰ ${escapeHtml(a.time)} · 📞 ${escapeHtml(a.phone)}</div>
+        </div>
+        <span class="appt-service-tag">${escapeHtml(a.service.split(' ')[0])}</span>
+        <span class="appt-chevron">⌄</span>
+      `;
+      header.addEventListener('click', () => toggleCard(a.id));
+
+      // Body (editable)
+      const body = document.createElement('div');
+      body.className = 'appt-card-body';
+      
+      const inner = document.createElement('div');
+      inner.className = 'appt-card-inner';
+      
+      inner.innerHTML = `
+        <div class="appt-detail-grid">
+          <div class="appt-detail-item"><label>Full Name</label><input type="text" id="edit-name-${a.id}" value="${escapeAttr(a.name)}"></div>
+          <div class="appt-detail-item"><label>Phone</label><input type="tel" id="edit-phone-${a.id}" value="${escapeAttr(a.phone)}"></div>
+          <div class="appt-detail-item"><label>Email</label><input type="email" id="edit-email-${a.id}" value="${escapeAttr(a.email || '')}"></div>
+          <div class="appt-detail-item"><label>Date</label><input type="date" id="edit-date-${a.id}" value="${d.toISOString().split('T')[0]}"></div>
+          <div class="appt-detail-item"><label>Time</label><input type="time" id="edit-time-${a.id}" value="${a.time.replace(' ', 'T').split(' ')[0]}"></div>
+          <div class="appt-detail-item full"><label>Service</label>
+            <select id="edit-service-${a.id}">
+              <option>Tax Preparation & Planning</option>
+              <option>Payroll / 1099 Processing</option>
+              <option>Bookkeeping</option>
+              <option>ITIN Processing</option>
+              <option>Sales Tax</option>
+              <option>Tax Resolution</option>
+            </select>
+          </div>
+          <div class="appt-detail-item full">
+            <label>Notes</label>
+            <textarea class="notes-area" id="edit-notes-${a.id}" maxlength="700" placeholder="Add notes...">${escapeHtml(a.notes || '')}</textarea>
+          </div>
+        </div>
+        <div class="appt-actions">
+          <button class="btn-save-appt" onclick="updateAppointment('${a.id}')">💾 Save Changes</button>
+          <button class="btn-gcal-dash" onclick="addToGoogleCalendarFromDash('${a.id}')">📅 Google Calendar</button>
+          <button class="btn-delete-appt" onclick="deleteAppointment('${a.id}')">🗑️ Delete</button>
+        </div>
+      `;
+
+      // Set selected service
+      setTimeout(() => {
+        const select = document.getElementById(`edit-service-${a.id}`);
+        if (select) select.value = a.service;
+      }, 10);
+
+      body.appendChild(inner);
+      card.appendChild(header);
+      card.appendChild(body);
+      list.appendChild(card);
+    });
+  }
+
+  function toggleCard(id) {
+    document.getElementById('card-' + id).classList.toggle('expanded');
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function escapeAttr(str) {
+    return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function updateAppointment(id) {
+    const appts = getAppointments();
+    const idx = appts.findIndex(a => a.id === id);
+    if (idx === -1) return;
+    
+    appts[idx].name = document.getElementById('edit-name-' + id).value.trim();
+    appts[idx].phone = document.getElementById('edit-phone-' + id).value.trim();
+    appts[idx].email = document.getElementById('edit-email-' + id).value.trim();
+    appts[idx].service = document.getElementById('edit-service-' + id).value;
+    appts[idx].notes = document.getElementById('edit-notes-' + id).value;
+    
+    // Handle date and time
+    const dateInput = document.getElementById('edit-date-' + id).value;
+    const timeInput = document.getElementById('edit-time-' + id).value;
+    
+    if (dateInput) {
+      const [year, month, day] = dateInput.split('-').map(Number);
+      const newDate = new Date(year, month - 1, day);
+      appts[idx].date = newDate.toISOString();
+    }
+    
+    if (timeInput) {
+      const [hours, minutes] = timeInput.split(':').map(Number);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const hour12 = hours % 12 || 12;
+      appts[idx].time = `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    }
+    
+    saveAppointments(appts);
+    showToast('✅ Appointment updated');
+    renderDashboard();
+  }
+
+  function deleteAppointment(id) {
+    if (!confirm('Delete this appointment?')) return;
+    const appts = getAppointments().filter(a => a.id !== id);
+    saveAppointments(appts);
+    showToast('🗑️ Appointment deleted');
+    renderDashboard();
+  }
+
+  function addToGoogleCalendarFromDash(id) {
+    const appts = getAppointments();
+    const a = appts.find(x => x.id === id);
+    if (!a) return;
+    
+    const d = new Date(a.date);
+    const timeParts = a.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeParts) return;
+    
+    let hours = parseInt(timeParts[1]);
+    const mins = parseInt(timeParts[2]);
+    const ampm = timeParts[3].toUpperCase();
+    
+    if (ampm === 'PM' && hours !== 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0;
+    
+    const start = new Date(d);
+    start.setHours(hours, mins, 0);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    
+    function toGoogleDate(date) {
+      return date.getFullYear() +
+        String(date.getMonth() + 1).padStart(2, '0') +
+        String(date.getDate()).padStart(2, '0') + 'T' +
+        String(date.getHours()).padStart(2, '0') +
+        String(date.getMinutes()).padStart(2, '0') + '00Z';
+    }
+    
+    const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent(a.service + ' - ' + a.name) +
+      '&dates=' + toGoogleDate(start) + '/' + toGoogleDate(end) +
+      '&details=' + encodeURIComponent('Phone: ' + a.phone + '\nEmail: ' + (a.email || '') + '\nNotes: ' + (a.notes || '')) +
+      '&location=' + encodeURIComponent('142 Rockaway Ave, Valley Stream, NY 11580');
+    
+    window.open(url, '_blank');
+  }
+
+  // ==================== INIT ====================
+  renderCalendar();
+  
+  // Event listeners for question panel
+  document.getElementById('question-trigger-btn').addEventListener('click', togglePanel);
+  document.getElementById('panel-close-btn').addEventListener('click', togglePanel);
+  document.getElementById('overlay').addEventListener('click', togglePanel);
+  
+  // Make functions global
+  window.changeMonth = changeMonth;
+  window.onServiceChange = onServiceChange;
+  window.submitSMS = submitSMS;
+  window.submitEmail = submitEmail;
+  window.updateSummary = updateSummary;
+  window.updateQuestionCount = updateQuestionCount;
+  window.sendQuestion = sendQuestion;
+  window.showAdminLogin = showAdminLogin;
+  window.closeAdminLogin = closeAdminLogin;
+  window.doLogin = doLogin;
+  window.showForgotPassword = showForgotPassword;
+  window.closeForgotModal = closeForgotModal;
+  window.resetPassword = resetPassword;
+  window.doLogout = doLogout;
+  window.updateAppointment = updateAppointment;
+  window.deleteAppointment = deleteAppointment;
+  window.addToGoogleCalendarFromDash = addToGoogleCalendarFromDash;
+</script>
+</body>
+</html>
